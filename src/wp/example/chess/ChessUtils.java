@@ -28,18 +28,3 @@ public class ChessUtils {
     }
 }
 
-//        String outputStr = "";
-//        int cntGapCharOnLeftSide = (12 - str.length()) / 2;
-//        int cntGapCharOnRightSide = (12 - str.length() - cntGapCharOnLeftSide);
-//
-//        for (int i = 0; i < cntGapCharOnLeftSide; i++) {
-//            outputStr = outputStr + " ";
-//        }
-//
-//        outputStr = outputStr + str;
-//
-//        for (int i = 0; i < cntGapCharOnRightSide; i++) {
-//            outputStr = outputStr + " ";
-//        }
-//        return "|" + outputStr + "|"
-

@@ -36,7 +36,7 @@ public class ChessEngine {
             }
             catch (Exception e) {
                 System.out.println("SOMETHING WENT WRONG WHILE MOVING. REPEAT THE MOVING.");
-                //e.printStackTrace();
+                e.printStackTrace();
             }
         }
     }

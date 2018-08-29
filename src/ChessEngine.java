@@ -2,33 +2,40 @@ import wp.example.chess.ChessDashboard;
 import java.util.Scanner;
 
 public class ChessEngine {
-    public static void main(String[] args) {
+    private static int continueGameCondition = 2;
+    private static int maxPlayerTurnsInGame = 1000;
+    int triedMovesCounter;
+    int playerTurnToken;
+    String currPlayerMove;
+    String[] Players;
 
-        ChessDashboard dashboard1 =  new ChessDashboard();
+    public ChessEngine () {
+        this.triedMovesCounter = 0;
+        this.playerTurnToken = 0;
+    }
 
-        int triedMovesCounter = 0;
-        int movesToken = 0;
-        String playerMove;
-        String[] Players = dashboard1.getPlayerType();
-        Scanner cmdMove = new Scanner(System.in);
-        dashboard1.showDashboardFields();
-
+    public void startGame () {
         System.out.println("\n\n" + "CHESS GAME STARTED! \n" + "ENTER MOVE - FOR EXAMPLE A1 A3 \n");
 
-        while (dashboard1.findKings() == 2 && triedMovesCounter < 1000) {
+        ChessDashboard dashboard =  new ChessDashboard();
+        dashboard.showDashboardFields();
+        this.Players = dashboard.getPlayerType();
+        Scanner cmdMove = new Scanner(System.in);
 
-            System.out.println(Players[movesToken] + "`S MOVE \n");
-            playerMove = cmdMove.nextLine();
+        while (dashboard.findKings() == continueGameCondition && triedMovesCounter < maxPlayerTurnsInGame) {
+
+            System.out.println(Players[playerTurnToken] + "`S MOVE \n");
+            currPlayerMove = cmdMove.nextLine();
 
             try {
-                String coordinates[] = playerMove.split(" ");
+                String coordinates[] = currPlayerMove.split(" ");
 
                 System.out.println("TRY TURN FROM " + coordinates[0] + " TO " + coordinates[1]
-                + "\n" + "THERE`S " + (triedMovesCounter)++ + " MOVE NUMBER");
+                        + "\n" + "THERE`S " + (triedMovesCounter)++ + " MOVE NUMBER");
 
-                dashboard1.movePiece(coordinates[0], coordinates[1], Players[movesToken]);
-                movesToken = 1 - movesToken;
-                dashboard1.showDashboardFields();
+                dashboard.movePiece(coordinates[0], coordinates[1], Players[playerTurnToken]);
+                playerTurnToken = 1 - playerTurnToken;
+                dashboard.showDashboardFields();
             }
             catch (ArithmeticException | ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
                 System.out.println("INVALID DATA. REPEAT THE MOVING");
@@ -36,8 +43,13 @@ public class ChessEngine {
             }
             catch (Exception e) {
                 System.out.println("SOMETHING WENT WRONG WHILE MOVING. REPEAT THE MOVING.");
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
+    }
+
+    public static void main(String[] args) {
+        ChessEngine gameSession = new ChessEngine();
+        gameSession.startGame();
     }
 }

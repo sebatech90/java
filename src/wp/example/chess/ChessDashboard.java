@@ -55,6 +55,8 @@ public class ChessDashboard {
         PIECE_MOVEMENT_CONVERSION.put("H", 7);
     }
 
+    //  Set<String> keys = PIECE_MOVEMENT_CONVERSION.keySet();
+    //String a = getKey(PIECE_MOVEMENT_CONVERSION,1);
     static String DASHBOARD_COLS_VIS[] = {"A", "B", "C", "D", "E", "F", "G", "H"};
 
     public ChessDashboard() {

@@ -1,11 +1,13 @@
 package wp.example.chess;
 
 public class ChessUtils {
-    public String strExtend(String str, String signImitation) {
+    public String strExtend(String str, String signImitation, boolean drawOnlyBottom) {
 
         int strLenght = str.length();
+        int limit = 10;
+        if (drawOnlyBottom) {limit = 13;}
 
-        for (int i = 0; i <=  10 - strLenght; i++) {
+        for (int i = 0; i <=  limit - strLenght; i++) {
             str = str + signImitation;
         }
         return str;

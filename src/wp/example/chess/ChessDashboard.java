@@ -5,18 +5,18 @@ import java.util.HashMap;
 public class ChessDashboard {
     private static String PLAYERS[] = {"WHITE", "BLACK"};
 
-    private static String INIT_PIECES_ROWS[][] = {
+    private static String PIECE_TYPES_IN_INITIAL_ORDER[][] = {
             {"ROOK", "KNIGHT", "BISHOP", "QUEEN", "KING", "BISHOP", "KNIGHT", "ROOK"},
             {"PAWN", "PAWN", "PAWN", "PAWN", "PAWN", "PAWN", "PAWN", "PAWN"}
     };
-    private static int INIT_ROWS_POSITIONS[][] = {
+    private static int INITIAL_PLAYER_PIECE_ROWS_LOCATION[][] = {
             {0, 1},
             {7, 6}
     };
-    private static int fieldsContent[][] = new int[8][8];
+    private static int dashboardFieldsContent[][] = new int[8][8];
     //stringBuilder s = new stringBuilder();
 
-    public ChessPiece pieces[] = new ChessPiece[33];
+    public ChessPiece pieces[] = new ChessPiece[32];
 
     static final HashMap<String, String> PIECE_MOVEMENT_VECTOR = new HashMap<String, String>();
     /* substrings define allowed finished moves:
@@ -55,35 +55,69 @@ public class ChessDashboard {
         PIECE_MOVEMENT_CONVERSION.put("H", 7);
     }
 
-    //  Set<String> keys = PIECE_MOVEMENT_CONVERSION.keySet();
+    //Set<String> keys = PIECE_MOVEMENT_CONVERSION.keySet();
     //String a = getKey(PIECE_MOVEMENT_CONVERSION,1);
-    static String DASHBOARD_COLS_VIS[] = {"A", "B", "C", "D", "E", "F", "G", "H"};
+    //static String DASHBOARD_COLS_VIS[] = {"A", "B", "C", "D", "E", "F", "G", "H"};
 
     public ChessDashboard() {
-        int j = 1;
 
-        for (int row = 0; row < INIT_ROWS_POSITIONS.length; row++) {
-            for (int col = 0; col < INIT_ROWS_POSITIONS[row].length; col++) {
+        boolean oldVersion = true;
+        if (oldVersion) {
+            int objNub = 0;
 
-                int dashboardRow = INIT_ROWS_POSITIONS[row][col];
+            for (int row = 0; row < INITIAL_PLAYER_PIECE_ROWS_LOCATION.length; row++) {
+                for (int col = 0; col < INITIAL_PLAYER_PIECE_ROWS_LOCATION[row].length; col++) {
 
-                for (int dashboardCol = 0; dashboardCol < INIT_PIECES_ROWS[col].length; dashboardCol++) {
+                    int dashboardRow = INITIAL_PLAYER_PIECE_ROWS_LOCATION[row][col];
 
-                    String pieceName = INIT_PIECES_ROWS[col][dashboardCol] + "_" + PLAYERS[row].substring(0,1);
+                    for (int dashboardCol = 0; dashboardCol < PIECE_TYPES_IN_INITIAL_ORDER[col].length; dashboardCol++) {
 
-                    //Create piece object and get id
-
-                    pieces[j] = new ChessPiece(INIT_PIECES_ROWS[col][dashboardCol], pieceName, PLAYERS[row]);
-                    fieldsContent[dashboardRow][dashboardCol] = pieces[j].getId();
-                    j++;
+                        String pieceName = PIECE_TYPES_IN_INITIAL_ORDER[col][dashboardCol] + "_" + PLAYERS[row].substring(0,1);
+                        //Create piece object and get id
+                        pieces[objNub] = new ChessPiece(PIECE_TYPES_IN_INITIAL_ORDER[col][dashboardCol], pieceName, PLAYERS[row]);
+                        //System.out.println("objNub "+ objNub);
+                        dashboardFieldsContent[dashboardRow][dashboardCol] = pieces[objNub].getId();
+                        objNub++;
+                    }
                 }
+            }
+        } else {
+            int objNum = 1;
+            int playerNum = 0;
+            int initialRow;
+            int initialCol;
+
+            for (String player : PLAYERS) {
+                initialRow = 0;
+                for (String[] dashboardPiecesInRow : PIECE_TYPES_IN_INITIAL_ORDER) {
+                    initialCol = 0;
+                    for (String chessPiece : dashboardPiecesInRow) {
+
+                        pieces[objNum] = new ChessPiece(chessPiece, chessPiece + "_" + player.substring(0,1), player);
+
+                        setDashboardInitialRow(playerNum, initialRow, initialCol, objNum);
+                        initialCol++;
+                        objNum++;
+                    }
+                    initialRow++;
+                }
+                playerNum++;
             }
         }
     }
 
+    public void setDashboardInitialRow(int playerNum, int groupNumRow, int dashboardCol, int objNumber) {
+
+        //System.out.println("playerNum " + playerNum + "groupNumRow " + groupNumRow);
+        int dashPosRow = INITIAL_PLAYER_PIECE_ROWS_LOCATION[playerNum][groupNumRow];
+
+        System.out.println("dashPosRow " + dashPosRow + " dashPosCol " + dashboardCol);
+        dashboardFieldsContent[dashPosRow][dashboardCol] = pieces[objNumber].getId();
+    }
+
     public int getDashboardFieldId(int row, int col) {
-        if (row <= fieldsContent.length && col <= fieldsContent[row].length) {
-            return this.fieldsContent[row][col];
+        if (row <= dashboardFieldsContent.length && col <= dashboardFieldsContent[row].length) {
+            return this.dashboardFieldsContent[row][col];
         } else {
             return 32;
         }
@@ -94,11 +128,11 @@ public class ChessDashboard {
     }
 
     public void setDashboardFieldId(int row, int col, int pieceId) {
-        this.fieldsContent[row][col] = pieceId;
+        this.dashboardFieldsContent[row][col] = pieceId;
     }
 
     public void clearDashboardField(int row, int col) {
-        this.fieldsContent[row][col] = 0;
+        this.dashboardFieldsContent[row][col] = 0;
     }
 
     public void movePiece(String fromField, String toField, String currPlayer) throws ArrayIndexOutOfBoundsException,
@@ -182,9 +216,9 @@ public class ChessDashboard {
     }
 
     public void showDashboardFieldsId() {
-        for (int row = 0; row < fieldsContent.length; row++) {
-            for (int k = 0; k < fieldsContent[row].length; k++) {
-                System.out.print(fieldsContent[row][k] + "\t");
+        for (int row[] : dashboardFieldsContent) {
+            for (int col : row) {
+                System.out.print(col + "\t");
             }
             System.out.println();
         }
@@ -193,8 +227,9 @@ public class ChessDashboard {
     public int findKings() {
         int cntKings = 0;
 
-        for (int i = 1; i < pieces.length; i++) {
-            if ( pieces[i].getType().equals("KING") ) {
+        for (ChessPiece objPiece : pieces) {
+            //System.out.println("objPiece " + objPiece);
+            if ( objPiece.getType().equals("KING") ) {
                 cntKings++;
             }
         }
@@ -202,59 +237,44 @@ public class ChessDashboard {
     }
 
     public void showDashboardFields() {
+        ChessUtils customizeElement = new ChessUtils();
 
-        ChessUtils customizeStr = new ChessUtils();
-        String fieldWithPiece;
-        String endFieldLast;
-        String signsImitationFields[] = {" ", ":"};
+        int userDashboardView[][] = customizeElement.reverseFirstArrayDimension(dashboardFieldsContent);
         int startSign = 0;
+        int rowNum = 0;
+        String signsFillingFields[] = {":", " "};
 
-        for (int row = fieldsContent.length - 1; row >= 0; row--) {
-            startSign = 1 - startSign;
-            String endField = "";
-            //System.out.print(row + 1);
+        for (int row[] : userDashboardView) {
+            StringBuilder descPieceField = new StringBuilder();
+            StringBuilder restField = new StringBuilder();
 
-            for (int col = 0; col < fieldsContent[row].length; col++) {
+            for (int pieceIdOnField : row) {
+                if (pieceIdOnField != 0) {
+                    ChessPiece objectOnField = pieces[pieceIdOnField - 1];
+                    descPieceField.append(customizeElement.strExtend(objectOnField.getName(), signsFillingFields[startSign],false));
+                } else {
+                    descPieceField.append(customizeElement.strExtend("", signsFillingFields[startSign],false));
+                }
+                restField.append(customizeElement.strExtend("", signsFillingFields[startSign],false));
                 startSign = 1 - startSign;
-                String lastSignInRow = "";
-
-                if (fieldsContent[row][col] != 0) {
-                    fieldWithPiece = customizeStr.strExtend(pieces[fieldsContent[row][col]].getName(), signsImitationFields[startSign],false);
-                    //System.out.println(fieldWithPiece);
-                } else {
-                    fieldWithPiece = customizeStr.strExtend("", signsImitationFields[startSign],false);
-                }
-
-                if (col == fieldsContent[row].length - 1) {lastSignInRow = "|";}
-
-                if (col == 0) {
-                    System.out.print(" |" + fieldWithPiece + lastSignInRow);
-                    endField = endField + " |" + customizeStr.strExtend("", signsImitationFields[startSign],false);
-                } else {
-                    System.out.print("|" + fieldWithPiece + lastSignInRow);
-                    endField = endField + "|" + customizeStr.strExtend("", signsImitationFields[startSign],false);
-                }
-            }
-            //Filling rest part of field without piece name
-            endField = endField + "|";
-
-            //Bottom with col`s names
-            if (row == 0) {
-
-                StringBuilder dashboradBottom = new StringBuilder();
-
-                for (int i = 0; i < 8; i++) {
-                    dashboradBottom.append("      " + DASHBOARD_COLS_VIS[i] + "     ");
-                }
-                endFieldLast = dashboradBottom.toString();
-            } else {
-                endFieldLast = endField;
             }
 
-            System.out.println("\n" + endField + "\n"
-                    + (row + 1) + endField.substring(1,endField.length())
-                    + "\n" + endField + "\n" + endFieldLast);
+            int dashboardRowLabel = userDashboardView.length - rowNum;
+            String tabSign = "  ";
+
+            System.out.println(tabSign + descPieceField);
+            System.out.println(tabSign + restField);
+            System.out.println(dashboardRowLabel + " " + restField.toString());
+            System.out.println(tabSign + restField + "\n" + tabSign + restField);
+            startSign = 1 - startSign;
+            rowNum++;
         }
+
+        StringBuilder lastRow = new StringBuilder();
+        for (String key : PIECE_MOVEMENT_CONVERSION.keySet()) {
+            lastRow.append("       " + key + "   ");
+        }
+        System.out.println(lastRow);
     }
 
     String getMovementChangeVector (int row, int col, int row_new, int col_new) {

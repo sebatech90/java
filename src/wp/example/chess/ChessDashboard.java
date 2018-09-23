@@ -9,7 +9,7 @@ public class ChessDashboard {
             {"ROOK", "KNIGHT", "BISHOP", "QUEEN", "KING", "BISHOP", "KNIGHT", "ROOK"},
             {"PAWN", "PAWN", "PAWN", "PAWN", "PAWN", "PAWN", "PAWN", "PAWN"}
     };
-    private static int INITIAL_PLAYER_PIECE_ROWS_LOCATION[][] = {
+    private static int PIECE_ROWS_INITIAL_LOCATION[][] = {
             {0, 1},
             {7, 6}
     };
@@ -55,53 +55,26 @@ public class ChessDashboard {
         PIECE_MOVEMENT_CONVERSION.put("H", 7);
     }
 
-    //Set<String> keys = PIECE_MOVEMENT_CONVERSION.keySet();
-    //String a = getKey(PIECE_MOVEMENT_CONVERSION,1);
-    //static String DASHBOARD_COLS_VIS[] = {"A", "B", "C", "D", "E", "F", "G", "H"};
-
     public ChessDashboard() {
+        int objNum = 0;
 
-        boolean oldVersion = true;
-        if (oldVersion) {
-            int objNub = 0;
+        for (int i = 0; i < PIECE_ROWS_INITIAL_LOCATION.length; i++) {
+            for (int j = 0; j < PIECE_ROWS_INITIAL_LOCATION[i].length; j++) {
 
-            for (int row = 0; row < INITIAL_PLAYER_PIECE_ROWS_LOCATION.length; row++) {
-                for (int col = 0; col < INITIAL_PLAYER_PIECE_ROWS_LOCATION[row].length; col++) {
+                int dashboardRow = PIECE_ROWS_INITIAL_LOCATION[i][j];
+                int dashboardCol = 0;
 
-                    int dashboardRow = INITIAL_PLAYER_PIECE_ROWS_LOCATION[row][col];
+                for (String piece : PIECE_TYPES_IN_INITIAL_ORDER[j]) {
+                    //Create piece object and get id
+                    String pieceName = piece + "_" + PLAYERS[i].substring(0,1);
+                    //pieces[objNum] = new ChessPiece(piece, pieceName, PLAYERS[i]);
 
-                    for (int dashboardCol = 0; dashboardCol < PIECE_TYPES_IN_INITIAL_ORDER[col].length; dashboardCol++) {
-
-                        String pieceName = PIECE_TYPES_IN_INITIAL_ORDER[col][dashboardCol] + "_" + PLAYERS[row].substring(0,1);
-                        //Create piece object and get id
-                        pieces[objNub] = new ChessPiece(PIECE_TYPES_IN_INITIAL_ORDER[col][dashboardCol], pieceName, PLAYERS[row]);
-                        //System.out.println("objNub "+ objNub);
-                        dashboardFieldsContent[dashboardRow][dashboardCol] = pieces[objNub].getId();
-                        objNub++;
-                    }
+                    ChessPiece createdPiece = new ChessPiece(piece, pieceName, PLAYERS[i]);
+                    dashboardFieldsContent[dashboardRow][dashboardCol] = createdPiece.getId();
+                    pieces[createdPiece.getId() - 1] = createdPiece;
+                    dashboardCol++;
+                    objNum++;
                 }
-            }
-        } else {
-            int objNum = 1;
-            int playerNum = 0;
-            int initialRow;
-            int initialCol;
-
-            for (String player : PLAYERS) {
-                initialRow = 0;
-                for (String[] dashboardPiecesInRow : PIECE_TYPES_IN_INITIAL_ORDER) {
-                    initialCol = 0;
-                    for (String chessPiece : dashboardPiecesInRow) {
-
-                        pieces[objNum] = new ChessPiece(chessPiece, chessPiece + "_" + player.substring(0,1), player);
-
-                        setDashboardInitialRow(playerNum, initialRow, initialCol, objNum);
-                        initialCol++;
-                        objNum++;
-                    }
-                    initialRow++;
-                }
-                playerNum++;
             }
         }
     }
@@ -109,7 +82,7 @@ public class ChessDashboard {
     public void setDashboardInitialRow(int playerNum, int groupNumRow, int dashboardCol, int objNumber) {
 
         //System.out.println("playerNum " + playerNum + "groupNumRow " + groupNumRow);
-        int dashPosRow = INITIAL_PLAYER_PIECE_ROWS_LOCATION[playerNum][groupNumRow];
+        int dashPosRow = PIECE_ROWS_INITIAL_LOCATION[playerNum][groupNumRow];
 
         System.out.println("dashPosRow " + dashPosRow + " dashPosCol " + dashboardCol);
         dashboardFieldsContent[dashPosRow][dashboardCol] = pieces[objNumber].getId();
